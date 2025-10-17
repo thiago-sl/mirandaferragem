@@ -7,7 +7,7 @@
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f2f5;
+        background-color: #f4f6f8;
         margin: 0;
         padding: 0;
         color: #333;
@@ -26,11 +26,41 @@
         border-bottom-right-radius: 15px;
     }
 
+    .dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+        justify-content: center;
+    }
+
+    .card {
+        background-color: #fff;
+        flex: 1 1 200px;
+        max-width: 300px;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .card h3 {
+        margin: 10px 0;
+        font-size: 16px;
+        color: #777;
+    }
+
+    .card p {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+    }
+
     .container {
         display: flex;
         flex-wrap: wrap;
-        padding: 20px;
         gap: 20px;
+        padding: 20px;
         justify-content: center;
     }
 
@@ -40,7 +70,7 @@
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         flex: 1 1 450px;
-        max-width: 600px;
+        max-width: 650px;
         min-width: 280px;
     }
 
@@ -101,14 +131,15 @@
         flex-wrap: wrap;
     }
 
-    /* Responsividade */
+    /* Responsividade total */
     @media (max-width: 1200px) {
-        .container { flex-direction: column; align-items: center; }
+        .container, .dashboard { flex-direction: column; align-items: center; }
     }
 
     @media (max-width: 768px) {
         h2 { font-size: 18px; }
         table th, table td { font-size: 12px; padding: 6px; }
+        .card p { font-size: 20px; }
     }
 
     @media (max-width: 480px) {
@@ -121,6 +152,21 @@
 <body>
 
 <header>🛠️ Miranda Ferragens 🛠️</header>
+
+<div class="dashboard">
+    <div class="card">
+        <h3>Produtos em Estoque</h3>
+        <p id="totalProdutos">0</p>
+    </div>
+    <div class="card">
+        <h3>Total de Vendas</h3>
+        <p id="totalVendas">0</p>
+    </div>
+    <div class="card">
+        <h3>Valor Vendido (R$)</h3>
+        <p id="valorVendido">0.00</p>
+    </div>
+</div>
 
 <div class="container">
 
@@ -179,11 +225,13 @@ let produtos = JSON.parse(localStorage.getItem(LS_PRODUTOS)) || [];
 let vendas = JSON.parse(localStorage.getItem(LS_VENDAS)) || [];
 let carrinho = [];
 
+// Funções de persistência
 function salvarLocalStorage() {
     localStorage.setItem(LS_PRODUTOS, JSON.stringify(produtos));
     localStorage.setItem(LS_VENDAS, JSON.stringify(vendas));
 }
 
+// Cadastro de produto
 function cadastrarProduto() {
     const nome = document.getElementById("nomeProduto").value.trim();
     const preco = parseFloat(document.getElementById("precoProduto").value);
@@ -195,8 +243,10 @@ function cadastrarProduto() {
     document.getElementById("nomeProduto").value = "";
     document.getElementById("precoProduto").value = "";
     document.getElementById("quantidadeProduto").value = "";
+    atualizarDashboard();
 }
 
+// Tabela produtos
 function atualizarTabelaProdutos() {
     const tbody = document.getElementById("tabelaProdutos").querySelector("tbody");
     tbody.innerHTML = "";
@@ -216,12 +266,13 @@ function atualizarTabelaProdutos() {
     });
 }
 
+// Carrinho
 function adicionarCarrinho(index) {
     const produto = produtos[index];
     if (produto.quantidade === 0) { alert("Produto sem estoque!"); return; }
     const existente = carrinho.find(item => item.nome === produto.nome);
     if (existente) {
-        if (existente.qtd < produto.quantidade) { existente.qtd++; }
+        if (existente.qtd < produto.quantidade) existente.qtd++;
         else { alert("Estoque insuficiente!"); return; }
     } else {
         carrinho.push({ nome: produto.nome, preco: produto.preco, qtd: 1 });
@@ -293,6 +344,7 @@ function concluirVenda() {
     atualizarCarrinho();
     atualizarTabelaProdutos();
     atualizarTabelaVendas();
+    atualizarDashboard();
 }
 
 function atualizarTabelaVendas() {
@@ -305,7 +357,6 @@ function atualizarTabelaVendas() {
         row.insertCell(2).innerText = v.qtd;
         row.insertCell(3).innerText = v.total.toFixed(2);
         row.insertCell(4).innerText = v.data;
-
         const btn = document.createElement("button");
         btn.className = "btn-small btn-excluir";
         btn.innerText = "Excluir";
@@ -322,6 +373,7 @@ function excluirVenda(index) {
     salvarLocalStorage();
     atualizarTabelaProdutos();
     atualizarTabelaVendas();
+    atualizarDashboard();
 }
 
 function exportarCSV() {
@@ -337,10 +389,18 @@ function exportarCSV() {
     link.click();
 }
 
+// Dashboard
+function atualizarDashboard() {
+    document.getElementById("totalProdutos").innerText = produtos.reduce((acc,p)=>acc+p.quantidade,0);
+    document.getElementById("totalVendas").innerText = vendas.length;
+    document.getElementById("valorVendido").innerText = vendas.reduce((acc,v)=>acc+v.total,0).toFixed(2);
+}
+
+// Inicialização
 atualizarTabelaProdutos();
 atualizarCarrinho();
 atualizarTabelaVendas();
-
+atualizarDashboard();
 </script>
 
 </body>
