@@ -31,6 +31,7 @@
         flex-wrap: wrap;
         padding: 20px;
         gap: 20px;
+        justify-content: center;
     }
 
     .box {
@@ -38,11 +39,12 @@
         padding: 20px;
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        flex: 1 1 400px;
-        min-width: 300px;
+        flex: 1 1 450px;
+        max-width: 600px;
+        min-width: 280px;
     }
 
-    h2 { margin-top: 0; color: #2c3e50; }
+    h2 { margin-top: 0; color: #2c3e50; font-size: 20px; }
 
     input, button {
         padding: 10px;
@@ -50,6 +52,8 @@
         border-radius: 6px;
         border: 1px solid #ccc;
         font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     input:focus {
@@ -72,17 +76,18 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 10px;
+        font-size: 14px;
     }
 
     table th, table td {
-        padding: 10px;
+        padding: 8px;
         text-align: left;
         border-bottom: 1px solid #ddd;
     }
 
-    table th { background-color: #3498db; color: white; }
+    table th { background-color: #3498db; color: white; font-size: 14px; }
 
-    .btn-small { padding: 6px 10px; font-size: 14px; border-radius: 5px; margin-right: 5px; }
+    .btn-small { padding: 5px 8px; font-size: 12px; border-radius: 5px; margin-right: 5px; }
     .btn-vender { background-color: #27ae60; }
     .btn-vender:hover { background-color: #1e8449; }
     .btn-excluir { background-color: #e74c3c; }
@@ -90,11 +95,27 @@
     .btn-export { background-color: #8e44ad; margin-top: 10px; }
     .btn-export:hover { background-color: #732d91; }
 
-    .flex-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .flex-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
 
-    /* Responsividade total */
-    @media (max-width: 1200px) { .container { flex-direction: column; } }
-    @media (max-width: 600px) { input, button { width: 100%; } table th, table td { font-size: 14px; } }
+    /* Responsividade */
+    @media (max-width: 1200px) {
+        .container { flex-direction: column; align-items: center; }
+    }
+
+    @media (max-width: 768px) {
+        h2 { font-size: 18px; }
+        table th, table td { font-size: 12px; padding: 6px; }
+    }
+
+    @media (max-width: 480px) {
+        .flex-row { flex-direction: column; }
+        input, button { font-size: 14px; }
+        table { font-size: 12px; }
+    }
 </style>
 </head>
 <body>
@@ -158,13 +179,11 @@ let produtos = JSON.parse(localStorage.getItem(LS_PRODUTOS)) || [];
 let vendas = JSON.parse(localStorage.getItem(LS_VENDAS)) || [];
 let carrinho = [];
 
-// Salvar no localStorage
 function salvarLocalStorage() {
     localStorage.setItem(LS_PRODUTOS, JSON.stringify(produtos));
     localStorage.setItem(LS_VENDAS, JSON.stringify(vendas));
 }
 
-// Cadastro
 function cadastrarProduto() {
     const nome = document.getElementById("nomeProduto").value.trim();
     const preco = parseFloat(document.getElementById("precoProduto").value);
@@ -178,7 +197,6 @@ function cadastrarProduto() {
     document.getElementById("quantidadeProduto").value = "";
 }
 
-// Tabela de produtos com filtro
 function atualizarTabelaProdutos() {
     const tbody = document.getElementById("tabelaProdutos").querySelector("tbody");
     tbody.innerHTML = "";
@@ -198,7 +216,6 @@ function atualizarTabelaProdutos() {
     });
 }
 
-// Carrinho
 function adicionarCarrinho(index) {
     const produto = produtos[index];
     if (produto.quantidade === 0) { alert("Produto sem estoque!"); return; }
@@ -236,7 +253,6 @@ function atualizarCarrinho() {
     atualizarTroco();
 }
 
-// Total e troco
 function atualizarTotal() {
     const subtotal = carrinho.reduce((acc, i) => acc + i.preco*i.qtd, 0);
     const descontoPct = parseFloat(document.getElementById("desconto").value) || 0;
@@ -251,7 +267,6 @@ function atualizarTroco() {
     document.getElementById("troco").innerText = troco >= 0 ? troco.toFixed(2) : "0.00";
 }
 
-// Concluir venda com baixa de estoque persistente
 function concluirVenda() {
     if (carrinho.length === 0) { alert("Carrinho vazio!"); return; }
     const total = parseFloat(document.getElementById("totalVenda").innerText);
@@ -260,14 +275,7 @@ function concluirVenda() {
 
     for (let item of carrinho) {
         const produto = produtos.find(p => p.nome === item.nome);
-        if (produto) {
-            if (produto.quantidade >= item.qtd) {
-                produto.quantidade -= item.qtd;
-            } else {
-                alert(`Estoque insuficiente para o produto ${produto.nome}.`);
-                return;
-            }
-        }
+        if (produto) produto.quantidade -= item.qtd;
         vendas.push({
             nome: item.nome,
             preco: item.preco,
@@ -287,7 +295,6 @@ function concluirVenda() {
     atualizarTabelaVendas();
 }
 
-// Atualizar histórico de vendas
 function atualizarTabelaVendas() {
     const tbody = document.getElementById("tabelaVendas").querySelector("tbody");
     tbody.innerHTML = "";
@@ -307,18 +314,16 @@ function atualizarTabelaVendas() {
     });
 }
 
-// Excluir venda e atualizar estoque
 function excluirVenda(index) {
     const venda = vendas[index];
     const produto = produtos.find(p => p.nome === venda.nome);
-    if (produto) produto.quantidade += venda.qtd; // Reposição do estoque
+    if (produto) produto.quantidade += venda.qtd; 
     vendas.splice(index, 1);
     salvarLocalStorage();
     atualizarTabelaProdutos();
     atualizarTabelaVendas();
 }
 
-// Exportar CSV
 function exportarCSV() {
     if (vendas.length === 0) { alert("Não há vendas para exportar!"); return; }
     let csv = "Produto,Preço,Qtd,Total,Data\n";
@@ -332,7 +337,6 @@ function exportarCSV() {
     link.click();
 }
 
-// Inicialização
 atualizarTabelaProdutos();
 atualizarCarrinho();
 atualizarTabelaVendas();
