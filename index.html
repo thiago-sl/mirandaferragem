@@ -1,73 +1,53 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Controle de Caixa - Miranda Ferragens</title>
 
-<!-- bibliotecas para PDF -->
+<!-- PDF Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f5f5f7;
-    color: #222;
-  }
-  header {
-    background: linear-gradient(90deg,#3498db,#2ecc71);
-    color: white;
-    padding: 18px 12px;
-    text-align: center;
-    font-size: 30px;
-    font-weight: 700;
-  }
-  .wrap { max-width: 1100px; margin: 18px auto; padding: 12px; }
-  .grid { display: grid; grid-template-columns: 1fr 420px; gap: 18px; }
-  .card {
-    background:#fff; padding:14px; border-radius:8px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  }
-  h2 { margin:0 0 10px 0; color:#2c3e50; font-size:18px; }
-  input[type="text"], input[type="number"], select {
-    width:100%; padding:9px; margin:6px 0; border-radius:6px;
-    border:1px solid #d0d7dd; font-size:15px;
-  }
-  .row { display:flex; gap:8px; }
-  .row .col { flex:1; }
-  button {
-    padding:10px 12px; border-radius:7px; border:none;
-    background:#3498db; color:white; font-weight:600; cursor:pointer;
-  }
-  button.secondary { background:#6c757d; }
-  button.danger { background:#e74c3c; }
-  button.success { background:#27ae60; }
-  button.small { padding:6px 8px; font-size:13px; border-radius:6px; }
-  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:14px; }
-  th, td { padding:8px 6px; border-bottom:1px solid #eef2f5; text-align:left; }
-  thead th { background:#3498db; color:#fff; font-size:13px; }
-  .controls { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-  .muted { color:#6b7a87; font-size:13px; }
-  .report-box {
-    background:#fbfdff; padding:10px; border:1px dashed #e6edf3;
-    border-radius:6px; margin-top:8px;
-  }
-  @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } .card { margin-bottom:12px; } }
-  @media (max-width:480px) {
-    header { font-size:18px; padding:14px 10px; }
-    input, button { font-size:14px; }
-    thead th, td { font-size:12px; padding:6px; }
-  }
+* {box-sizing:border-box;}
+body {font-family: Arial, Helvetica, sans-serif; margin:0; padding:0; background:#f5f5f7; color:#222;}
+header {background: linear-gradient(90deg,#3498db,#2ecc71); color:white; padding:18px 12px; text-align:center; font-size:30px; font-weight:700;}
+.wrap {max-width:1100px; margin:18px auto; padding:12px;}
+.grid {display:grid; grid-template-columns:1fr 450px; gap:18px;}
+.card {background:#fff; padding:16px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06);}
+h2 {margin:0 0 10px 0; color:#2c3e50; font-size:18px;}
+input[type="text"], input[type="number"], input[type="date"], select {width:100%; padding:9px; margin:6px 0; border-radius:6px; border:1px solid #d0d7dd; font-size:15px;}
+.row {display:flex; gap:8px;}
+.row .col {flex:1;}
+button {padding:10px 12px; border-radius:7px; border:none; background:#3498db; color:white; font-weight:600; cursor:pointer;}
+button.secondary {background:#6c757d;}
+button.danger {background:#e74c3c;}
+button.success {background:#27ae60;}
+button.small {padding:6px 8px; font-size:13px; border-radius:6px;}
+table {width:100%; border-collapse:collapse; margin-top:10px; font-size:14px;}
+th, td {padding:8px 6px; border-bottom:1px solid #eef2f5; text-align:left;}
+thead th {background:#3498db; color:#fff; font-size:13px;}
+.controls {display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+.muted {color:#6b7a87; font-size:13px;}
+.report-box {background:#fbfdff; padding:10px; border:1px dashed #e6edf3; border-radius:6px; margin-top:8px; overflow:auto;}
+.summary-card {flex:1; padding:16px; border-radius:8px; color:white; text-align:center;}
+.summary-title {font-size:16px; font-weight:600;}
+.summary-value {font-size:28px; font-weight:700;}
+.bg-blue {background:#3498db;}
+.bg-green {background:#27ae60;}
+.bg-yellow {background:#f39c12;}
+.bg-red {background:#e74c3c;}
+@media(max-width:980px){.grid{grid-template-columns:1fr;} .card{margin-bottom:12px;}}
+@media(max-width:480px){header{font-size:18px; padding:14px 10px;} input, button{font-size:14px;} thead th, td{font-size:12px; padding:6px;}}
 </style>
 </head>
 <body>
+
 <header>🛠️ Miranda Ferragens 🛠️</header>
 <div class="wrap">
   <div class="grid">
+    <!-- ESQUERDA: Cadastro e Resumo -->
     <div>
       <div class="card">
         <h2>Cadastrar / Editar Produto</h2>
@@ -98,14 +78,29 @@
           </table>
         </div>
       </div>
-      <div class="card" style="margin-top:14px">
-        <h2>Resumo</h2>
-        <div class="muted">Produtos em estoque: <strong id="totalProdutos">0</strong></div>
-        <div class="muted">Vendas: <strong id="totalVendas">0</strong></div>
-        <div class="muted">Valor vendido (R$): <strong id="valorVendido">0.00</strong></div>
+
+      <!-- RESUMO MODERNO -->
+      <div class="card" style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap;">
+        <div class="summary-card bg-blue">
+          <div class="summary-title">Produtos em Estoque</div>
+          <div class="summary-value" id="totalProdutos">0</div>
+        </div>
+        <div class="summary-card bg-green">
+          <div class="summary-title">Total de Vendas</div>
+          <div class="summary-value" id="totalVendas">0</div>
+        </div>
+        <div class="summary-card bg-yellow">
+          <div class="summary-title">Valor Vendido (R$)</div>
+          <div class="summary-value" id="valorVendido">0.00</div>
+        </div>
+        <div class="summary-card bg-red">
+          <div class="summary-title">Produtos Vendidos</div>
+          <div class="summary-value" id="produtosVendidos">0</div>
+        </div>
       </div>
     </div>
 
+    <!-- DIREITA: Vendas e Relatório -->
     <div>
       <div class="card">
         <h2>Venda / Pedido</h2>
@@ -140,7 +135,11 @@
       </div>
 
       <div class="card" style="margin-top:14px">
-        <h2>Relatório</h2>
+        <h2>Relatório de Vendas</h2>
+        <div class="row">
+          <div class="col"><input type="date" id="dataInicio" onchange="montarRelatorioPreview()"></div>
+          <div class="col"><input type="date" id="dataFim" onchange="montarRelatorioPreview()"></div>
+        </div>
         <div id="reportArea" class="report-box">
           <div style="display:flex; justify-content:space-between;">
             <div><strong>Miranda Ferragens</strong><div class="muted">Recibo de Vendas</div></div>
@@ -150,7 +149,7 @@
         </div>
         <div class="controls">
           <button onclick="montarRelatorioPreview()">Atualizar</button>
-          <button class="secondary" onclick="exportarProdutosCSV()">Exportar Produtos CSV</button>
+          <button class="secondary" onclick="exportarProdutosPDF()">Exportar Produtos PDF</button>
         </div>
       </div>
     </div>
@@ -158,184 +157,234 @@
 </div>
 
 <script>
-const LS_PRODUTOS='produtos_miranda_v2',LS_VENDAS='vendas_miranda_v2';
-let produtos=JSON.parse(localStorage.getItem(LS_PRODUTOS))||[];
-let vendas=JSON.parse(localStorage.getItem(LS_VENDAS))||[];
-let carrinho=[],editingIndex=null;
+// ===== VARIÁVEIS =====
+const LS_PRODUTOS='produtos_miranda_v4', LS_VENDAS='vendas_miranda_v4';
+let produtos = JSON.parse(localStorage.getItem(LS_PRODUTOS)) || [];
+let vendas = JSON.parse(localStorage.getItem(LS_VENDAS)) || [];
+let carrinho = [], editingIndex=null;
 
+// ===== FUNÇÕES DE SALVAR LOCAL =====
 function salvarLocal(){
- localStorage.setItem(LS_PRODUTOS,JSON.stringify(produtos));
- localStorage.setItem(LS_VENDAS,JSON.stringify(vendas));
+  localStorage.setItem(LS_PRODUTOS, JSON.stringify(produtos));
+  localStorage.setItem(LS_VENDAS, JSON.stringify(vendas));
 }
-function handleCadastrar(){editingIndex===null?cadastrarProduto():salvarEdicao();}
+
+// ===== CADASTRO E EDIÇÃO =====
+function handleCadastrar(){ editingIndex===null ? cadastrarProduto() : salvarEdicao(); }
 function cadastrarProduto(){
- const nome=document.getElementById('nomeProduto').value.trim();
- const preco=parseFloat(document.getElementById('precoProduto').value);
- const qtd=parseInt(document.getElementById('quantidadeProduto').value);
- if(!nome||isNaN(preco)||isNaN(qtd)) return; // validação silenciosa
- produtos.push({id:Date.now(),nome,preco,quantidade:qtd});
- salvarLocal(); atualizarTabelaProdutos(); limparCampos(); atualizarResumo();
+  const nome = document.getElementById('nomeProduto').value.trim();
+  const preco = parseFloat(document.getElementById('precoProduto').value);
+  const qtd = parseInt(document.getElementById('quantidadeProduto').value);
+  if(!nome || isNaN(preco) || isNaN(qtd)) return;
+  produtos.push({id:Date.now(), nome, preco, quantidade:qtd});
+  salvarLocal(); atualizarTabelaProdutos(); limparCampos(); atualizarResumo();
 }
-function abrirEdicao(i){const p=produtos[i];if(!p)return;
- editingIndex=i;
- document.getElementById('nomeProduto').value=p.nome;
- document.getElementById('precoProduto').value=p.preco;
- document.getElementById('quantidadeProduto').value=p.quantidade;
- document.getElementById('btnCadastrar').innerText='Salvar';
- document.getElementById('btnCadastrar').style.background='#f39c12';
+function abrirEdicao(i){
+  const p = produtos[i]; if(!p) return;
+  editingIndex=i;
+  document.getElementById('nomeProduto').value=p.nome;
+  document.getElementById('precoProduto').value=p.preco;
+  document.getElementById('quantidadeProduto').value=p.quantidade;
+  document.getElementById('btnCadastrar').innerText='Salvar';
+  document.getElementById('btnCadastrar').style.background='#f39c12';
 }
 function salvarEdicao(){
- const nome=document.getElementById('nomeProduto').value.trim();
- const preco=parseFloat(document.getElementById('precoProduto').value);
- const qtd=parseInt(document.getElementById('quantidadeProduto').value);
- if(!nome||isNaN(preco)||isNaN(qtd)) return;
- produtos[editingIndex]={...produtos[editingIndex],nome,preco,quantidade:qtd};
- salvarLocal(); atualizarTabelaProdutos(); limparCampos(); editingIndex=null;
- document.getElementById('btnCadastrar').innerText='Cadastrar';
- document.getElementById('btnCadastrar').style.background='#3498db';
- atualizarResumo();
+  const nome = document.getElementById('nomeProduto').value.trim();
+  const preco = parseFloat(document.getElementById('precoProduto').value);
+  const qtd = parseInt(document.getElementById('quantidadeProduto').value);
+  if(!nome||isNaN(preco)||isNaN(qtd)) return;
+  produtos[editingIndex] = {...produtos[editingIndex], nome, preco, quantidade:qtd};
+  salvarLocal(); atualizarTabelaProdutos(); limparCampos(); editingIndex=null;
+  document.getElementById('btnCadastrar').innerText='Cadastrar';
+  document.getElementById('btnCadastrar').style.background='#3498db';
+  atualizarResumo();
 }
 function limparCampos(){
- document.getElementById('nomeProduto').value='';
- document.getElementById('precoProduto').value='';
- document.getElementById('quantidadeProduto').value='';
- editingIndex=null;
- document.getElementById('btnCadastrar').innerText='Cadastrar';
- document.getElementById('btnCadastrar').style.background='#3498db';
+  document.getElementById('nomeProduto').value='';
+  document.getElementById('precoProduto').value='';
+  document.getElementById('quantidadeProduto').value='';
+  editingIndex=null;
+  document.getElementById('btnCadastrar').innerText='Cadastrar';
+  document.getElementById('btnCadastrar').style.background='#3498db';
 }
+
+// ===== TABELA DE PRODUTOS =====
 function atualizarTabelaProdutos(){
- const tbody=document.querySelector('#tabelaProdutos tbody');tbody.innerHTML='';
- const filtro=document.getElementById('pesquisaProduto').value.toLowerCase();
- const estoqueFilter=document.getElementById('filtroEstoque').value;
- produtos.forEach((p,i)=>{
-  if(!p.nome.toLowerCase().includes(filtro)) return;
-  if(estoqueFilter==='in'&&p.quantidade<=0) return;
-  if(estoqueFilter==='out'&&p.quantidade>0) return;
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${p.nome}</td><td>${p.preco.toFixed(2)}</td><td>${p.quantidade}</td>`;
-  const td=document.createElement('td');
-  td.innerHTML=`<button class='small success' onclick='adicionarCarrinho(${i})'>Adicionar</button>
-  <button class='small' style='background:#f6c85f' onclick='abrirEdicao(${i})'>Editar</button>
-  <button class='small danger' onclick='excluirProduto(${i})'>Excluir</button>`;
-  tr.appendChild(td); tbody.appendChild(tr);
- });
+  const tbody=document.querySelector('#tabelaProdutos tbody'); tbody.innerHTML='';
+  const filtro=document.getElementById('pesquisaProduto').value.toLowerCase();
+  const estoqueFilter=document.getElementById('filtroEstoque').value;
+  produtos.forEach((p,i)=>{
+    if(!p.nome.toLowerCase().includes(filtro)) return;
+    if(estoqueFilter==='in' && p.quantidade<=0) return;
+    if(estoqueFilter==='out' && p.quantidade>0) return;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${p.nome}</td><td>${p.preco.toFixed(2)}</td><td>${p.quantidade}</td>`;
+    const td=document.createElement('td');
+    td.innerHTML=`<button class='small success' onclick='adicionarCarrinho(${i})'>Adicionar</button>
+                  <button class='small' style='background:#f6c85f' onclick='abrirEdicao(${i})'>Editar</button>
+                  <button class='small danger' onclick='excluirProduto(${i})'>Excluir</button>`;
+    tr.appendChild(td); tbody.appendChild(tr);
+  });
 }
 function excluirProduto(i){
- if(!confirm('Excluir produto?')) return;
- produtos.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarResumo();
+  if(!confirm('Excluir produto?')) return;
+  produtos.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarResumo();
 }
+
+// ===== CARRINHO DE VENDAS =====
 function adicionarCarrinho(i){
- const p=produtos[i]; if(!p||p.quantidade<=0) return;
- const e=carrinho.find(c=>c.id===p.id);
- if(e){ if(e.qtd<p.quantidade) e.qtd++; } else { carrinho.push({id:p.id,nome:p.nome,preco:p.preco,qtd:1}); }
- atualizarCarrinho();
+  const p = produtos[i]; if(!p || p.quantidade<=0) return;
+  const e = carrinho.find(c=>c.id===p.id);
+  if(e){ if(e.qtd<p.quantidade) e.qtd++; } else { carrinho.push({id:p.id,nome:p.nome,preco:p.preco,qtd:1}); }
+  atualizarCarrinho();
 }
 function removerDoCarrinho(i){ carrinho.splice(i,1); atualizarCarrinho(); }
 function atualizarCarrinho(){
- const tbody=document.querySelector('#carrinho tbody'); tbody.innerHTML='';
- carrinho.forEach((it,i)=>{
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${it.nome}</td><td>${it.preco.toFixed(2)}</td><td>${it.qtd}</td><td>${(it.preco*it.qtd).toFixed(2)}</td>
-  <td><button class='small danger' onclick='removerDoCarrinho(${i})'>Remover</button></td>`;
-  tbody.appendChild(tr);
- });
- atualizarTotal(); atualizarTroco();
+  const tbody=document.querySelector('#carrinho tbody'); tbody.innerHTML='';
+  carrinho.forEach((it,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${it.nome}</td><td>${it.preco.toFixed(2)}</td><td>${it.qtd}</td><td>${(it.preco*it.qtd).toFixed(2)}</td>
+    <td><button class='small danger' onclick='removerDoCarrinho(${i})'>Remover</button></td>`;
+    tbody.appendChild(tr);
+  });
+  atualizarTotal(); atualizarTroco();
 }
+
+// ===== TOTAL, DESCONTO E TROCO =====
 function atualizarTotal(){
- const sub=carrinho.reduce((s,it)=>s+it.preco*it.qtd,0);
- const d=parseFloat(document.getElementById('desconto').value)||0;
- document.getElementById('totalVenda').innerText=(sub*(1-d/100)).toFixed(2);
+  const sub=carrinho.reduce((s,it)=>s+it.preco*it.qtd,0);
+  const d=parseFloat(document.getElementById('desconto').value)||0;
+  document.getElementById('totalVenda').innerText=(sub*(1-d/100)).toFixed(2);
 }
 function atualizarTroco(){
- const p=parseFloat(document.getElementById('valorPago').value)||0;
- const t=parseFloat(document.getElementById('totalVenda').innerText)||0;
- document.getElementById('troco').innerText=(p-t>=0?(p-t).toFixed(2):'0.00');
+  const p=parseFloat(document.getElementById('valorPago').value)||0;
+  const t=parseFloat(document.getElementById('totalVenda').innerText)||0;
+  document.getElementById('troco').innerText=(p-t>=0?(p-t).toFixed(2):'0.00');
 }
+
+// ===== CONCLUIR VENDA =====
 function concluirVenda(){
- if(!carrinho.length) return;
- for(const it of carrinho){
-  const prod=produtos.find(p=>p.id===it.id);
-  if(!prod||prod.quantidade<it.qtd) return;
- }
- for(const it of carrinho){
-  const prod=produtos.find(p=>p.id===it.id);
-  if(prod) prod.quantidade-=it.qtd;
-  vendas.push({id:Date.now()+Math.random(),nome:it.nome,preco:it.preco,qtd:it.qtd,total:it.preco*it.qtd,data:new Date().toISOString()});
- }
- carrinho=[]; document.getElementById('desconto').value=0; document.getElementById('valorPago').value='';
- salvarLocal(); atualizarCarrinho(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  if(!carrinho.length) return;
+  const desconto = parseFloat(document.getElementById('desconto').value) || 0;
+  for(const it of carrinho){
+    const prod = produtos.find(p => p.id === it.id);
+    if(!prod || prod.quantidade < it.qtd) return;
+  }
+  for(const it of carrinho){
+    const prod = produtos.find(p => p.id === it.id);
+    if(prod) prod.quantidade -= it.qtd;
+    const subtotal = it.preco*it.qtd;
+    const totalComDesconto = subtotal*(1 - desconto/100);
+    vendas.push({
+      id:Date.now()+Math.random(),
+      nome:it.nome,
+      preco:it.preco,
+      qtd:it.qtd,
+      subtotal:subtotal,
+      desconto:desconto,
+      total:totalComDesconto,
+      data:new Date().toISOString()
+    });
+  }
+  carrinho=[]; document.getElementById('desconto').value=0; document.getElementById('valorPago').value='';
+  salvarLocal(); atualizarCarrinho(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
 }
 function limparCarrinho(){ if(!confirm('Limpar pedido atual?')) return; carrinho=[]; atualizarCarrinho(); }
+
+// ===== HISTÓRICO DE VENDAS =====
 function atualizarTabelaVendas(){
- const tbody=document.querySelector('#tabelaVendas tbody'); tbody.innerHTML='';
- vendas.slice().reverse().forEach((v,idxRev)=>{
-  const realIndex=vendas.length-1-idxRev;
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td>
-  <td><button class='small danger' onclick='excluirVenda(${realIndex})'>Excluir</button></td>`;
-  tbody.appendChild(tr);
- });
+  const tbody=document.querySelector('#tabelaVendas tbody'); tbody.innerHTML='';
+  vendas.slice().reverse().forEach((v,idxRev)=>{
+    const realIndex=vendas.length-1-idxRev;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td>
+    <td><button class='small danger' onclick='excluirVenda(${realIndex})'>Excluir</button></td>`;
+    tbody.appendChild(tr);
+  });
 }
 function excluirVenda(i){
- if(!confirm('Excluir venda e repor estoque?')) return;
- const v=vendas[i]; if(!v) return;
- const p=produtos.find(p=>p.nome===v.nome); if(p) p.quantidade+=v.qtd;
- vendas.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  if(!confirm('Excluir venda e repor estoque?')) return;
+  const v=vendas[i]; if(!v) return;
+  const p=produtos.find(p=>p.nome===v.nome); if(p) p.quantidade+=v.qtd;
+  vendas.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
 }
+
+// ===== EXPORTAR =====
 function exportarVendasCSV(){
- if(!vendas.length) return;
- let csv='Produto,Preço,Qtd,Total,Data\n';
- vendas.forEach(v=>csv+=`"${v.nome}",${v.preco},${v.qtd},${v.total},"${new Date(v.data).toLocaleString()}"\n`);
- baixarBlob(csv,'vendas_miranda_ferragens.csv');
+  if(!vendas.length) return;
+  let csv='Produto,Preço,Qtd,Subtotal,Desconto,Total,Data\n';
+  vendas.forEach(v=>csv+=`"${v.nome}",${v.preco},${v.qtd},${v.subtotal},${v.desconto},${v.total},"${new Date(v.data).toLocaleString()}"\n`);
+  baixarBlob(csv,'vendas_miranda_ferragens.csv');
 }
-function exportarProdutosCSV(){
- if(!produtos.length) return;
- let csv='Nome,Preço,Quantidade\n';
- produtos.forEach(p=>csv+=`"${p.nome}",${p.preco},${p.quantidade}\n`);
- baixarBlob(csv,'produtos_miranda_ferragens.csv');
+function exportarProdutosPDF(){ // simples exportação de produtos
+  if(!produtos.length) return;
+  let conteudo='Produtos Miranda Ferragens\n\nNome | Preço | Quantidade\n';
+  produtos.forEach(p=>{ conteudo+=`${p.nome} | ${p.preco.toFixed(2)} | ${p.quantidade}\n`; });
+  const blob = new Blob([conteudo], {type:'text/plain'});
+  const link = document.createElement('a'); link.href=URL.createObjectURL(blob); link.download='produtos_miranda_ferragens.txt'; link.click();
 }
 function baixarBlob(text,name){
- const blob=new Blob([text],{type:'text/csv;charset=utf-8;'});
- const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download=name; link.click();
+  const blob=new Blob([text],{type:'text/csv;charset=utf-8;'});
+  const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download=name; link.click();
 }
+
+// ===== RELATÓRIO PDF =====
 async function gerarRelatorioPDF(){
- montarRelatorioPreview();
- const {jsPDF}=window.jspdf; const el=document.getElementById('reportArea');
- try{
-   const canvas=await html2canvas(el,{scale:2});
-   const img=canvas.toDataURL('image/png');
-   const pdf=new jsPDF('p','mm','a4');
-   const w=pdf.internal.pageSize.getWidth();
-   const h=(canvas.height* w)/canvas.width;
-   pdf.addImage(img,'PNG',0,0,w,h); pdf.save('relatorio_vendas_miranda_ferragens.pdf');
- }catch(e){
-   console.error('Erro gerar PDF', e);
- }
+  montarRelatorioPreview();
+  const {jsPDF}=window.jspdf; const el=document.getElementById('reportArea');
+  try{
+    const canvas=await html2canvas(el,{scale:2});
+    const img=canvas.toDataURL('image/png');
+    const pdf=new jsPDF('p','mm','a4');
+    const w=pdf.internal.pageSize.getWidth();
+    const h=(canvas.height*w)/canvas.width;
+    pdf.addImage(img,'PNG',0,0,w,h); pdf.save('relatorio_vendas_miranda_ferragens.pdf');
+  }catch(e){ console.error('Erro gerar PDF',e); }
 }
+
+// ===== MONTAR RELATÓRIO HTML =====
 function montarRelatorioPreview(){
- document.getElementById('reportDate').innerText=new Date().toLocaleString();
- const body=document.getElementById('reportBody');
- if(!vendas.length){ body.innerHTML='<div class=\"muted\">Sem vendas registradas.</div>'; return; }
- const slice=vendas.slice(-20);
- let html='<table style=\"width:100%;border-collapse:collapse\"><thead><tr style=\"background:#f0f4f6\"><th style=\"padding:6px\">Produto</th><th>Preço</th><th>Qtd</th><th>Total</th><th>Data</th></tr></thead><tbody>';
- slice.forEach(v=>{ html+=`<tr><td style=\"padding:6px\">${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td></tr>`; });
- html+='</tbody></table>'; body.innerHTML=html;
+  document.getElementById('reportDate').innerText=new Date().toLocaleString();
+  const body=document.getElementById('reportBody');
+  const dataIni=document.getElementById('dataInicio').value;
+  const dataFim=document.getElementById('dataFim').value;
+  const start=new Date(dataIni); const end=new Date(dataFim); if(dataFim) end.setHours(23,59,59,999);
+  const filtradas=vendas.filter(v=>{
+    const d=new Date(v.data);
+    if(dataIni&&d<start) return false;
+    if(dataFim&&d>end) return false;
+    return true;
+  });
+  if(!filtradas.length){ body.innerHTML='<div class="muted">Sem vendas nesse período.</div>'; return; }
+  let html='<table style="width:100%;border-collapse:collapse"><thead><tr style="background:#f0f4f6"><th style="padding:6px">Produto</th><th>Preço</th><th>Qtd</th><th>Total</th><th>Data</th></tr></thead><tbody>';
+  filtradas.forEach(v=>{ html+=`<tr><td style="padding:6px">${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td></tr>`; });
+  html+='</tbody></table>'; body.innerHTML=html;
 }
+
+// ===== RESUMO =====
 function atualizarResumo(){
- document.getElementById('totalProdutos').innerText=produtos.reduce((s,p)=>s+(p.quantidade||0),0);
- document.getElementById('totalVendas').innerText=vendas.length;
- document.getElementById('valorVendido').innerText=vendas.reduce((s,v)=>s+(v.total||0),0).toFixed(2);
+  document.getElementById('totalProdutos').innerText = produtos.reduce((s,p)=>s+(p.quantidade||0),0);
+  document.getElementById('totalVendas').innerText = vendas.length;
+  document.getElementById('valorVendido').innerText = vendas.reduce((s,v)=>s+(v.total||0),0).toFixed(2);
+  document.getElementById('produtosVendidos').innerText = vendas.reduce((s,v)=>s+v.qtd,0);
 }
+
+// ===== AMOSTRA =====
 function carregarAmostra(){
- produtos=[
-   {id:1,nome:'Parafuso 1/4\"',preco:0.5,quantidade:200},
-   {id:2,nome:'Tinta 18L Branco',preco:120.00,quantidade:30},
-   {id:3,nome:'Martelo 16oz',preco:45.00,quantidade:15},
-   {id:4,nome:'Broca 8mm',preco:7.5,quantidade:60}
- ];
- vendas=[]; salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  produtos=[
+    {id:1,nome:'Parafuso 1/4"',preco:0.5,quantidade:200},
+    {id:2,nome:'Tinta 18L Branco',preco:120.00,quantidade:30},
+    {id:3,nome:'Martelo 16oz',preco:45.00,quantidade:15},
+    {id:4,nome:'Broca 8mm',preco:7.5,quantidade:60}
+  ];
+  vendas=[]; salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
 }
-function iniciar(){ atualizarTabelaProdutos(); atualizarCarrinho(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview(); document.getElementById('reportDate').innerText=new Date().toLocaleString(); }
+
+// ===== INICIAR =====
+function iniciar(){
+  atualizarTabelaProdutos(); atualizarCarrinho(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  document.getElementById('reportDate').innerText=new Date().toLocaleString();
+}
 iniciar();
 </script>
 </body>
