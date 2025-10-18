@@ -38,6 +38,7 @@ thead th {background:#3498db; color:#fff; font-size:13px;}
 .bg-green {background:#27ae60;}
 .bg-yellow {background:#f39c12;}
 .bg-red {background:#e74c3c;}
+.low-stock {background:#f8d7da;} /* Destacar estoque baixo */
 @media(max-width:980px){.grid{grid-template-columns:1fr;} .card{margin-bottom:12px;} }
 @media(max-width:480px){header{font-size:18px; padding:14px 10px;} input, button, select{font-size:14px;} thead th, td{font-size:12px; padding:6px;} }
 </style>
@@ -57,7 +58,7 @@ thead th {background:#3498db; color:#fff; font-size:13px;}
           <div class="col"><input id="percentualLucro" type="number" step="1" placeholder="Lucro (%)" oninput="calcularPrecoVenda()"></div>
         </div>
         <div class="row">
-          <div class="col"><input id="precoProduto" type="number" step="0.01" placeholder="Preço final (R$)" readonly></div>
+          <div class="col"><input id="precoProduto" type="number" step="0.01" placeholder="Preço final (R$)"></div>
           <div class="col"><input id="quantidadeProduto" type="number" placeholder="Quantidade"></div>
         </div>
         <div class="controls">
@@ -126,7 +127,7 @@ thead th {background:#3498db; color:#fff; font-size:13px;}
         <h2>Histórico de Vendas</h2>
         <div style="overflow:auto; max-height:260px;">
           <table id="tabelaVendas">
-            <thead><tr><th>Produto</th><th>Preço</th><th>Qtd</th><th>Total</th><th>Data</th><th>Ação</th></tr></thead>
+            <thead><tr><th>Produto</th><th>Preço</th><th>Qtd</th><th>Total</th><th>Data</th><th>Pagamento</th><th>Ação</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -151,20 +152,27 @@ thead th {background:#3498db; color:#fff; font-size:13px;}
 </div>
 
 <script>
-const LS_PRODUTOS='produtos_miranda_v2',LS_VENDAS='vendas_miranda_v2';
+const LS_PRODUTOS='produtos_miranda_v4',LS_VENDAS='vendas_miranda_v4';
 let produtos=JSON.parse(localStorage.getItem(LS_PRODUTOS))||[];
 let vendas=JSON.parse(localStorage.getItem(LS_VENDAS))||[];
 let carrinho=[],editingIndex=null;
 
-function salvarLocal(){ localStorage.setItem(LS_PRODUTOS,JSON.stringify(produtos)); localStorage.setItem(LS_VENDAS,JSON.stringify(vendas)); }
+function salvarLocal(){ 
+    localStorage.setItem(LS_PRODUTOS,JSON.stringify(produtos)); 
+    localStorage.setItem(LS_VENDAS,JSON.stringify(vendas)); 
+}
 
-// CALCULO DE PREÇO FINAL
+// ----------------- CADASTRO COM PREÇO CUSTO + LUCRO -----------------
 function calcularPrecoVenda(){
   const custo=parseFloat(document.getElementById('precoCusto').value)||0;
   const lucro=parseFloat(document.getElementById('percentualLucro').value)||0;
   const venda=custo*(1+lucro/100);
-  document.getElementById('precoProduto').value=venda.toFixed(2);
+  const precoInput=document.getElementById('precoProduto');
+  if(!precoInput.dataset.editado) precoInput.value=venda.toFixed(2);
 }
+document.getElementById('precoProduto').addEventListener('input',()=>{
+  document.getElementById('precoProduto').dataset.editado='true';
+});
 
 function handleCadastrar(){ editingIndex===null?cadastrarProduto():salvarEdicao(); }
 function cadastrarProduto(){
@@ -180,7 +188,8 @@ function abrirEdicao(i){
   editingIndex=i;
   document.getElementById('nomeProduto').value=p.nome;
   document.getElementById('precoProduto').value=p.preco;
-  document.getElementById('precoCusto').value=p.preco; // simples, mantém custo igual ao preço
+  document.getElementById('precoProduto').dataset.editado='true';
+  document.getElementById('precoCusto').value=p.preco;
   document.getElementById('percentualLucro').value=0;
   document.getElementById('quantidadeProduto').value=p.quantidade;
   document.getElementById('btnCadastrar').innerText='Salvar';
@@ -200,6 +209,7 @@ function salvarEdicao(){
 function limparCampos(){
   document.getElementById('nomeProduto').value=''; 
   document.getElementById('precoProduto').value=''; 
+  document.getElementById('precoProduto').dataset.editado='false';
   document.getElementById('precoCusto').value=''; 
   document.getElementById('percentualLucro').value=''; 
   document.getElementById('quantidadeProduto').value='';
@@ -208,7 +218,7 @@ function limparCampos(){
   document.getElementById('btnCadastrar').style.background='#3498db';
 }
 
-// Restante do código permanece igual (tabela, carrinho, vendas, PDF, relatórios)
+// ----------------- TABELA PRODUTOS -----------------
 function atualizarTabelaProdutos(){
   const tbody=document.querySelector('#tabelaProdutos tbody'); tbody.innerHTML='';
   const filtro=document.getElementById('pesquisaProduto').value.toLowerCase();
@@ -218,6 +228,7 @@ function atualizarTabelaProdutos(){
     if(estoqueFilter==='in'&&p.quantidade<=0) return;
     if(estoqueFilter==='out'&&p.quantidade>0) return;
     const tr=document.createElement('tr');
+    if(p.quantidade<5) tr.classList.add('low-stock');
     tr.innerHTML=`<td>${p.nome}</td><td>${p.preco.toFixed(2)}</td><td>${p.quantidade}</td>`;
     const td=document.createElement('td');
     td.innerHTML=`<button class='small success' onclick='adicionarCarrinho(${i})'>Adicionar</button>
@@ -226,7 +237,8 @@ function atualizarTabelaProdutos(){
     tr.appendChild(td); tbody.appendChild(tr);
   });
 }
-function excluirProduto(i){ produtos.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarResumo(); }
+
+// ----------------- CARRINHO E VENDAS -----------------
 function adicionarCarrinho(i){
   const p=produtos[i]; if(!p||p.quantidade<=0) return;
   const e=carrinho.find(c=>c.id===p.id);
@@ -269,12 +281,13 @@ function concluirVenda(){
   salvarLocal(); atualizarCarrinho(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
 }
 function limparCarrinho(){ carrinho=[]; atualizarCarrinho(); }
+function excluirProduto(i){ produtos.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarResumo(); }
 function atualizarTabelaVendas(){
   const tbody=document.querySelector('#tabelaVendas tbody'); tbody.innerHTML='';
   vendas.slice().reverse().forEach((v,idxRev)=>{
     const realIndex=vendas.length-1-idxRev;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td>
+    tr.innerHTML=`<td>${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento}</td>
     <td><button class='small danger' onclick='excluirVenda(${realIndex})'>Excluir</button></td>`;
     tbody.appendChild(tr);
   });
@@ -284,6 +297,8 @@ function excluirVenda(i){
   const p=produtos.find(p=>p.nome===v.nome); if(p) p.quantidade+=v.qtd;
   vendas.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
 }
+
+// ----------------- EXPORTAR CSV -----------------
 function exportarVendasCSV(){
   if(!vendas.length) return;
   let csv='Produto,Preço,Qtd,Total,Data,FormaPagamento\n';
@@ -300,6 +315,8 @@ function baixarBlob(text,name){
   const blob=new Blob([text],{type:'text/csv;charset=utf-8;'});
   const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download=name; link.click();
 }
+
+// ----------------- PDF RELATÓRIO -----------------
 async function gerarRelatorioPDF(){
   montarRelatorioPreview();
   const {jsPDF}=window.jspdf; const el=document.getElementById('reportArea');
@@ -318,11 +335,15 @@ function montarRelatorioPreview(){
   vendas.slice(-20).forEach(v=>{ html+=`<tr><td style="padding:6px">${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento}</td></tr>`; });
   html+='</tbody></table>'; body.innerHTML=html;
 }
+
+// ----------------- RESUMO -----------------
 function atualizarResumo(){
   document.getElementById('totalProdutos').innerText=produtos.reduce((s,p)=>s+(p.quantidade||0),0);
   document.getElementById('totalVendas').innerText=vendas.length;
   document.getElementById('valorVendido').innerText=vendas.reduce((s,v)=>s+(v.total||0),0).toFixed(2);
 }
+
+// ----------------- AMOSTRA -----------------
 function carregarAmostra(){
   produtos=[
     {id:1,nome:'Parafuso 1/4"',preco:0.5,quantidade:200},
@@ -332,6 +353,8 @@ function carregarAmostra(){
   ];
   vendas=[]; salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
 }
+
+// ----------------- INICIAR -----------------
 function iniciar(){
   atualizarTabelaProdutos(); atualizarCarrinho(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
   document.getElementById('reportDate').innerText=new Date().toLocaleString();
