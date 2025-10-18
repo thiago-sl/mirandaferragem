@@ -3,150 +3,140 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Caixa Profissional - Miranda Ferragens</title>
+<title>Controle de Caixa - Miranda Ferragens</title>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<!-- Bibliotecas PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
 <style>
 * {box-sizing:border-box;}
 body {font-family: Arial, Helvetica, sans-serif; margin:0; padding:0; background:#f5f5f7; color:#222;}
-header {background: linear-gradient(90deg,#3498db,#2ecc71); color:white; padding:18px 12px; text-align:center; font-size:28px; font-weight:700; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
-.wrap {max-width:1200px; margin:20px auto; padding:15px;}
-.grid {display:grid; grid-template-columns:1fr 500px; gap:20px;}
-.card {background:#fff; padding:20px; border-radius:10px; box-shadow:0 6px 20px rgba(0,0,0,0.08);}
-h2 {margin:0 0 12px 0; color:#2c3e50; font-size:20px;}
-input[type="text"], input[type="number"], select {width:100%; padding:10px; margin:6px 0; border-radius:6px; border:1px solid #d0d7dd; font-size:16px;}
-.row {display:flex; gap:10px; flex-wrap:wrap;}
+header {background: linear-gradient(90deg,#3498db,#2ecc71); color:white; padding:18px 12px; text-align:center; font-size:30px; font-weight:700;}
+.wrap {max-width:1100px; margin:18px auto; padding:12px;}
+.grid {display:grid; grid-template-columns:1fr 420px; gap:18px;}
+.card {background:#fff; padding:14px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06);}
+h2 {margin:0 0 10px 0; color:#2c3e50; font-size:18px;}
+input[type="text"], input[type="number"], select {width:100%; padding:9px; margin:6px 0; border-radius:6px; border:1px solid #d0d7dd; font-size:15px;}
+.row {display:flex; gap:8px;}
 .row .col {flex:1;}
-button {padding:12px 16px; border-radius:8px; border:none; background:#3498db; color:white; font-weight:600; cursor:pointer; transition:0.2s;}
-button:hover {opacity:0.85;}
+button {padding:10px 12px; border-radius:7px; border:none; background:#3498db; color:white; font-weight:600; cursor:pointer;}
 button.secondary {background:#6c757d;}
 button.danger {background:#e74c3c;}
 button.success {background:#27ae60;}
-button.small {padding:6px 10px; font-size:14px;}
-table {width:100%; border-collapse:collapse; margin-top:12px; font-size:15px;}
-th, td {padding:10px 8px; border-bottom:1px solid #eef2f5; text-align:left;}
-thead th {background:#3498db; color:#fff; font-size:14px;}
-.controls {display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
-.muted {color:#6b7a87; font-size:14px;}
-.report-box {background:#fbfdff; padding:12px; border:1px dashed #e6edf3; border-radius:8px; margin-top:10px;}
-.summary-card {flex:1; padding:20px; border-radius:10px; color:white; text-align:center; display:flex; flex-direction:column; justify-content:center; align-items:center; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
-.summary-title {font-size:18px; font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:6px;}
-.summary-value {font-size:32px; font-weight:700;}
+button.small {padding:6px 8px; font-size:13px; border-radius:6px;}
+table {width:100%; border-collapse:collapse; margin-top:10px; font-size:14px;}
+th, td {padding:8px 6px; border-bottom:1px solid #eef2f5; text-align:left;}
+thead th {background:#3498db; color:#fff; font-size:13px;}
+.controls {display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+.muted {color:#6b7a87; font-size:13px;}
+.report-box {background:#fbfdff; padding:10px; border:1px dashed #e6edf3; border-radius:6px; margin-top:8px;}
+.summary-card {flex:1; padding:16px; border-radius:8px; color:white; text-align:center; display:flex; flex-direction:column; justify-content:center; align-items:center;}
+.summary-title {font-size:16px; font-weight:600; margin-bottom:6px;}
+.summary-value {font-size:28px; font-weight:700;}
 .bg-blue {background:#3498db;}
 .bg-green {background:#27ae60;}
 .bg-yellow {background:#f39c12;}
 .bg-red {background:#e74c3c;}
-.low-stock {background:#f8d7da; color:#721c24;}
-#valorPago {font-size:18px; font-weight:600; padding:14px;}
-#totalVenda, #troco, #valorPagoDisplay {font-size:20px; font-weight:700; color:#2c3e50;}
-@media(max-width:1024px){.grid{grid-template-columns:1fr;} .card{margin-bottom:15px;} }
-@media(max-width:480px){header{font-size:20px; padding:14px 10px;} input, button, select{font-size:15px;} thead th, td{font-size:13px; padding:6px;} }
+#totalVenda, #valorPago, #troco {font-size:22px; font-weight:700;}
+@media(max-width:980px){.grid{grid-template-columns:1fr;} .card{margin-bottom:12px;}}
+@media(max-width:480px){header{font-size:18px; padding:14px 10px;} input, button, select{font-size:14px;} thead th, td{font-size:12px; padding:6px;}}
 </style>
 </head>
 <body>
 
 <header>🛠️ Miranda Ferragens 🛠️</header>
 <div class="wrap">
-<div class="grid">
-  <!-- ESQUERDA -->
-  <div>
-    <div class="card">
-      <h2>Cadastrar / Editar Produto</h2>
-      <input id="nomeProduto" type="text" placeholder="Nome do produto">
-      <div class="row">
-        <div class="col"><input id="precoCusto" type="number" step="0.01" placeholder="Preço de custo (R$)" oninput="calcularPrecoVenda()"></div>
-        <div class="col"><input id="percentualLucro" type="number" step="1" placeholder="Lucro (%)" oninput="calcularPrecoVenda()"></div>
-      </div>
-      <div class="row">
-        <div class="col"><input id="precoProduto" type="number" step="0.01" placeholder="Preço final (R$)"></div>
-        <div class="col"><input id="quantidadeProduto" type="number" placeholder="Quantidade"></div>
-      </div>
-      <div class="controls">
-        <button id="btnCadastrar" onclick="handleCadastrar()">Cadastrar</button>
-        <button class="secondary" onclick="limparCampos()">Limpar</button>
-        <button class="muted" onclick="carregarAmostra()">Amostra</button>
-      </div>
-      <hr>
-      <h2>Produtos</h2>
-      <div style="display:flex; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
-        <input id="pesquisaProduto" type="text" placeholder="Pesquisar..." oninput="atualizarTabelaProdutos()">
-        <select id="filtroEstoque" onchange="atualizarTabelaProdutos()">
-          <option value="all">Todos</option>
-          <option value="in">Com estoque</option>
-          <option value="out">Sem estoque</option>
-        </select>
-      </div>
-      <div style="overflow:auto; max-height:320px;">
-        <table id="tabelaProdutos">
-          <thead><tr><th>Nome</th><th>Preço</th><th>Qtd</th><th>Ações</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:18px; display:flex; gap:15px; flex-wrap:wrap;">
-      <div class="summary-card bg-blue"><div class="summary-title">📦 Produtos em estoque</div><div class="summary-value" id="totalProdutos">0</div></div>
-      <div class="summary-card bg-green"><div class="summary-title">💰 Vendas</div><div class="summary-value" id="totalVendas">0</div></div>
-      <div class="summary-card bg-yellow"><div class="summary-title">💵 Valor vendido</div><div class="summary-value" id="valorVendido">0.00</div></div>
-    </div>
-  </div>
-
-  <!-- DIREITA -->
-  <div>
-    <div class="card">
-      <h2>Venda / Pedido</h2>
-      <div class="muted">Adicione produtos ao carrinho clicando em "Adicionar".</div>
-      <div style="overflow:auto; max-height:250px; margin-top:10px;">
-        <table id="carrinho">
-          <thead><tr><th>Produto</th><th>Preço</th><th>Qtd</th><th>Subtotal</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <div class="col"><input id="desconto" type="number" min="0" max="100" placeholder="Desconto (%)" oninput="atualizarTotal()"></div>
-        <div class="col">
-          <select id="formaPagamento" onchange="atualizarTroco()">
-            <option value="dinheiro">Dinheiro</option>
-            <option value="credito">Crédito</option>
-            <option value="debito">Débito</option>
-            <option value="pix">Pix</option>
+  <div class="grid">
+    <!-- ESQUERDA -->
+    <div>
+      <div class="card">
+        <h2>Cadastrar / Editar Produto</h2>
+        <input id="nomeProduto" type="text" placeholder="Nome do produto">
+        <div class="row">
+          <div class="col"><input id="precoCusto" type="number" step="0.01" placeholder="Preço de Custo (opcional)"></div>
+          <div class="col"><input id="percentualLucro" type="number" step="0.01" placeholder="% Lucro (opcional)"></div>
+        </div>
+        <div class="row">
+          <div class="col"><input id="precoProduto" type="number" step="0.01" placeholder="Preço de Venda (opcional)"></div>
+          <div class="col"><input id="quantidadeProduto" type="number" placeholder="Quantidade"></div>
+        </div>
+        <div class="controls">
+          <button id="btnCadastrar" onclick="handleCadastrar()">Cadastrar</button>
+          <button class="secondary" onclick="limparCampos()">Limpar</button>
+          <button class="muted" onclick="carregarAmostra()">Amostra</button>
+        </div>
+        <hr>
+        <h2>Produtos</h2>
+        <div style="display:flex; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+          <input id="pesquisaProduto" type="text" placeholder="Pesquisar..." oninput="atualizarTabelaProdutos()">
+          <select id="filtroEstoque" onchange="atualizarTabelaProdutos()">
+            <option value="all">Todos</option>
+            <option value="in">Com estoque</option>
+            <option value="out">Sem estoque</option>
           </select>
         </div>
-        <div class="col"><input id="valorPago" type="number" min="0" placeholder="Valor Pago (R$)" oninput="atualizarTroco()"></div>
-      </div>
-      <div class="row" style="margin-top:15px; gap:15px;">
-        <div class="summary-card bg-blue">
-          <div class="summary-title">🧾 Total Venda</div>
-          <div class="summary-value" id="totalVenda">0.00</div>
+        <div style="overflow:auto; max-height:300px;">
+          <table id="tabelaProdutos">
+            <thead><tr><th>Nome</th><th>Preço</th><th>Qtd</th><th>Ações</th></tr></thead>
+            <tbody></tbody>
+          </table>
         </div>
-        <div class="summary-card bg-green">
-          <div class="summary-title">💵 Valor Pago</div>
-          <div class="summary-value" id="valorPagoDisplay">0.00</div>
-        </div>
-        <div class="summary-card bg-red">
-          <div class="summary-title">🎯 Troco</div>
-          <div class="summary-value" id="troco">0.00</div>
+        <div class="controls" style="margin-top:6px;">
+          <button onclick="gerarProdutosPDF()">Imprimir Produtos (PDF)</button>
         </div>
       </div>
-      <div class="controls" style="margin-top:15px;">
-        <button class="success" onclick="concluirVenda()">Concluir Venda</button>
-        <button class="secondary" onclick="limparCarrinho()">Limpar Pedido</button>
-        <button onclick="exportarVendasCSV()">Exportar Vendas CSV</button>
-        <button onclick="gerarRelatorioPDF()">Gerar PDF</button>
+
+      <div class="card" style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap;">
+        <div class="summary-card bg-blue"><div class="summary-title">Produtos em estoque</div><div class="summary-value" id="totalProdutos">0</div></div>
+        <div class="summary-card bg-green"><div class="summary-title">Vendas</div><div class="summary-value" id="totalVendas">0</div></div>
+        <div class="summary-card bg-yellow"><div class="summary-title">Valor vendido</div><div class="summary-value" id="valorVendido">0.00</div></div>
       </div>
-      <hr>
-      <h2>Histórico de Vendas</h2>
-      <div style="overflow:auto; max-height:260px;">
-        <table id="tabelaVendas">
-          <thead><tr><th>Produto</th><th>Preço</th><th>Qtd</th><th>Total</th><th>Data</th><th>Pagamento</th><th>Ação</th></tr></thead>
-          <tbody></tbody>
-        </table>
+    </div>
+
+    <!-- DIREITA -->
+    <div>
+      <div class="card">
+        <h2>Venda / Pedido</h2>
+        <div class="muted">Adicione produtos ao carrinho clicando em "Adicionar".</div>
+        <div style="overflow:auto; max-height:240px; margin-top:8px;">
+          <table id="carrinho">
+            <thead><tr><th>Produto</th><th>Preço</th><th>Qtd</th><th>Subtotal</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col"><input id="desconto" type="number" min="0" max="100" placeholder="Desconto (%)" oninput="atualizarTotal()"></div>
+          <div class="col">
+            <select id="formaPagamento" onchange="atualizarTroco()">
+              <option value="dinheiro">Dinheiro</option>
+              <option value="credito">Crédito</option>
+              <option value="debito">Débito</option>
+              <option value="pix">Pix</option>
+            </select>
+          </div>
+          <div class="col"><input id="valorPago" type="number" min="0" placeholder="Valor Pago (R$)" oninput="atualizarTroco()"></div>
+        </div>
+        <div class="muted">
+          Total: R$ <strong id="totalVenda">0.00</strong> — Troco: R$ <strong id="troco">0.00</strong>
+        </div>
+        <div class="controls">
+          <button class="success" onclick="concluirVenda()">Concluir Venda</button>
+          <button class="danger" onclick="cancelarPedido()">Cancelar Pedido</button>
+          <button onclick="gerarReciboPDF()">Gerar Recibo (PDF)</button>
+          <button onclick="gerarRelatorioVendasPDF()">Relatório Vendas (PDF)</button>
+        </div>
+        <hr>
+        <h2>Histórico de Vendas</h2>
+        <div style="overflow:auto; max-height:260px;">
+          <table id="tabelaVendas">
+            <thead><tr><th>Produto</th><th>Preço</th><th>Qtd</th><th>Total</th><th>Data</th><th>Ação</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <script>
@@ -157,19 +147,20 @@ let carrinho=[],editingIndex=null;
 
 function salvarLocal(){ localStorage.setItem(LS_PRODUTOS,JSON.stringify(produtos)); localStorage.setItem(LS_VENDAS,JSON.stringify(vendas)); }
 
-function calcularPrecoVenda(){
-  const custo=parseFloat(document.getElementById('precoCusto').value)||0;
-  const lucro=parseFloat(document.getElementById('percentualLucro').value)||0;
-  const precoFinal=(custo*(1+lucro/100)).toFixed(2);
-  document.getElementById('precoProduto').value=precoFinal;
-}
-
 function handleCadastrar(){ editingIndex===null?cadastrarProduto():salvarEdicao(); }
 function cadastrarProduto(){
   const nome=document.getElementById('nomeProduto').value.trim();
-  const preco=parseFloat(document.getElementById('precoProduto').value);
-  const qtd=parseInt(document.getElementById('quantidadeProduto').value);
-  if(!nome||isNaN(preco)||isNaN(qtd)) return;
+  let precoCusto=parseFloat(document.getElementById('precoCusto').value);
+  let percentual=parseFloat(document.getElementById('percentualLucro').value);
+  let precoManual=parseFloat(document.getElementById('precoProduto').value);
+  let qtd=parseInt(document.getElementById('quantidadeProduto').value);
+
+  if(isNaN(qtd)) qtd=0;
+  let preco;
+  if(!isNaN(precoManual)){ preco=precoManual; }
+  else if(!isNaN(precoCusto)&&!isNaN(percentual)){ preco=precoCusto*(1+percentual/100); }
+  else{ preco=0; }
+  
   produtos.push({id:Date.now(),nome,preco,quantidade:qtd});
   salvarLocal(); atualizarTabelaProdutos(); limparCampos(); atualizarResumo();
 }
@@ -179,6 +170,8 @@ function abrirEdicao(i){
   editingIndex=i;
   document.getElementById('nomeProduto').value=p.nome;
   document.getElementById('precoProduto').value=p.preco;
+  document.getElementById('precoCusto').value='';
+  document.getElementById('percentualLucro').value='';
   document.getElementById('quantidadeProduto').value=p.quantidade;
   document.getElementById('btnCadastrar').innerText='Salvar';
   document.getElementById('btnCadastrar').style.background='#f39c12';
@@ -186,9 +179,17 @@ function abrirEdicao(i){
 
 function salvarEdicao(){
   const nome=document.getElementById('nomeProduto').value.trim();
-  const preco=parseFloat(document.getElementById('precoProduto').value);
-  const qtd=parseInt(document.getElementById('quantidadeProduto').value);
-  if(!nome||isNaN(preco)||isNaN(qtd)) return;
+  let precoCusto=parseFloat(document.getElementById('precoCusto').value);
+  let percentual=parseFloat(document.getElementById('percentualLucro').value);
+  let precoManual=parseFloat(document.getElementById('precoProduto').value);
+  let qtd=parseInt(document.getElementById('quantidadeProduto').value);
+  if(isNaN(qtd)) qtd=0;
+
+  let preco;
+  if(!isNaN(precoManual)){ preco=precoManual; }
+  else if(!isNaN(precoCusto)&&!isNaN(percentual)){ preco=precoCusto*(1+percentual/100); }
+  else{ preco=produtos[editingIndex].preco; }
+
   produtos[editingIndex]={...produtos[editingIndex],nome,preco,quantidade:qtd};
   salvarLocal(); atualizarTabelaProdutos(); limparCampos(); editingIndex=null;
   document.getElementById('btnCadastrar').innerText='Cadastrar';
@@ -197,8 +198,11 @@ function salvarEdicao(){
 }
 
 function limparCampos(){
-  document.getElementById('nomeProduto').value=''; document.getElementById('precoProduto').value=''; document.getElementById('quantidadeProduto').value=''; 
-  document.getElementById('precoCusto').value=''; document.getElementById('percentualLucro').value='';
+  document.getElementById('nomeProduto').value='';
+  document.getElementById('precoProduto').value='';
+  document.getElementById('precoCusto').value='';
+  document.getElementById('percentualLucro').value='';
+  document.getElementById('quantidadeProduto').value='';
   editingIndex=null; document.getElementById('btnCadastrar').innerText='Cadastrar'; document.getElementById('btnCadastrar').style.background='#3498db';
 }
 
@@ -211,7 +215,6 @@ function atualizarTabelaProdutos(){
     if(estoqueFilter==='in'&&p.quantidade<=0) return;
     if(estoqueFilter==='out'&&p.quantidade>0) return;
     const tr=document.createElement('tr');
-    tr.className=p.quantidade<=2?'low-stock':'';
     tr.innerHTML=`<td>${p.nome}</td><td>${p.preco.toFixed(2)}</td><td>${p.quantidade}</td>`;
     const td=document.createElement('td');
     td.innerHTML=`<button class='small success' onclick='adicionarCarrinho(${i})'>Adicionar</button>
@@ -229,6 +232,7 @@ function adicionarCarrinho(i){
   if(e){ if(e.qtd<p.quantidade) e.qtd++; } else { carrinho.push({id:p.id,nome:p.nome,preco:p.preco,qtd:1}); }
   atualizarCarrinho();
 }
+
 function removerDoCarrinho(i){ carrinho.splice(i,1); atualizarCarrinho(); }
 
 function atualizarCarrinho(){
@@ -245,16 +249,14 @@ function atualizarCarrinho(){
 function atualizarTotal(){
   const sub=carrinho.reduce((s,it)=>s+it.preco*it.qtd,0);
   const d=parseFloat(document.getElementById('desconto').value)||0;
-  const total=(sub*(1-d/100)).toFixed(2);
-  document.getElementById('totalVenda').innerText=total;
+  document.getElementById('totalVenda').innerText=(sub*(1-d/100)).toFixed(2);
 }
 
 function atualizarTroco(){
   const p=parseFloat(document.getElementById('valorPago').value)||0;
   const t=parseFloat(document.getElementById('totalVenda').innerText)||0;
   const forma=document.getElementById('formaPagamento').value;
-  document.getElementById('troco').innerText=(forma==='dinheiro'?Math.max(p-t,0).toFixed(2):'0.00');
-  document.getElementById('valorPagoDisplay').innerText=p.toFixed(2);
+  document.getElementById('troco').innerText=(forma==='dinheiro'?(p-t>=0?(p-t).toFixed(2):'0.00'):'0.00');
 }
 
 function concluirVenda(){
@@ -268,17 +270,17 @@ function concluirVenda(){
     vendas.push({id:Date.now()+Math.random(),nome:it.nome,preco:it.preco,qtd:it.qtd,total:totalItem,data:new Date().toISOString(),formaPagamento:forma});
   }
   carrinho=[]; document.getElementById('desconto').value=0; document.getElementById('valorPago').value='';
-  salvarLocal(); atualizarCarrinho(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  salvarLocal(); atualizarCarrinho(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo();
 }
 
-function limparCarrinho(){ carrinho=[]; atualizarCarrinho(); }
+function cancelarPedido(){ carrinho=[]; atualizarCarrinho(); }
 
 function atualizarTabelaVendas(){
   const tbody=document.querySelector('#tabelaVendas tbody'); tbody.innerHTML='';
   vendas.slice().reverse().forEach((v,idxRev)=>{
     const realIndex=vendas.length-1-idxRev;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento}</td>
+    tr.innerHTML=`<td>${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td>
     <td><button class='small danger' onclick='excluirVenda(${realIndex})'>Excluir</button></td>`;
     tbody.appendChild(tr);
   });
@@ -287,53 +289,71 @@ function atualizarTabelaVendas(){
 function excluirVenda(i){
   const v=vendas[i]; if(!v) return;
   const p=produtos.find(p=>p.nome===v.nome); if(p) p.quantidade+=v.qtd;
-  vendas.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  vendas.splice(i,1); salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo();
 }
 
-function exportarVendasCSV(){
-  if(!vendas.length) return;
-  let csv='Produto,Preço,Qtd,Total,Data,FormaPagamento\n';
-  vendas.forEach(v=>csv+=`"${v.nome}",${v.preco},${v.qtd},${v.total},"${new Date(v.data).toLocaleString()}",${v.formaPagamento}\n`);
-  baixarBlob(csv,'vendas_miranda_ferragens.csv');
+// --- PDF e Relatórios ---
+function gerarReciboPDF(){
+  if(!carrinho.length) { alert("Carrinho vazio!"); return; }
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  pdf.setFontSize(16);
+  pdf.text(" Miranda Ferragens ",14,20);
+  pdf.setFontSize(10);
+  pdf.text("Endereço: Qr 03 conjunto N casa 2 Buritizinho Sobradinho 2",14,28);
+  pdf.text("Data: "+new Date().toLocaleString(),14,36);
+
+  const body = carrinho.map(it=>[it.nome,it.qtd,it.preco.toFixed(2),(it.qtd*it.preco).toFixed(2)]);
+  pdf.autoTable({ startY:45, head:[['Produto','Qtd','Preço','Subtotal']], body });
+
+  const totalY = pdf.lastAutoTable.finalY + 8;
+  const desconto = parseFloat(document.getElementById('desconto').value) || 0;
+  const totalVenda = parseFloat(document.getElementById('totalVenda').innerText) || 0;
+  const valorPago = parseFloat(document.getElementById('valorPago').value) || 0;
+  const troco = parseFloat(document.getElementById('troco').innerText) || 0;
+  pdf.text(`Desconto: ${desconto}%`,14,totalY);
+  pdf.text(`Total: R$ ${totalVenda.toFixed(2)}`,14,totalY+8);
+  pdf.text(`Valor Pago: R$ ${valorPago.toFixed(2)}`,14,totalY+16);
+  pdf.text(`Troco: R$ ${troco.toFixed(2)}`,14,totalY+24);
+
+  const filename=`Miranda_Ferragens_Recibo_${new Date().toISOString().replace(/[:.]/g,'-')}.pdf`;
+  pdf.save(filename);
 }
 
-function exportarProdutosCSV(){
-  if(!produtos.length) return;
-  let csv='Nome,Preço,Quantidade\n';
-  produtos.forEach(p=>csv+=`"${p.nome}",${p.preco},${p.quantidade}\n`);
-  baixarBlob(csv,'produtos_miranda_ferragens.csv');
+function gerarRelatorioVendasPDF(){
+  if(!vendas.length) { alert("Nenhuma venda registrada!"); return; }
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  pdf.setFontSize(16); pdf.text(" Miranda Ferragens - Relatório de Vendas ",14,20);
+  pdf.setFontSize(10); pdf.text("Endereço: Qr 03 conjunto N casa 2 Buritizinho Sobradinho 2",14,28);
+  pdf.text("Gerado em: "+new Date().toLocaleString(),14,36);
+
+  const body=vendas.slice().map(v=>[v.nome,v.qtd,v.preco.toFixed(2),v.total.toFixed(2),new Date(v.data).toLocaleString(),v.formaPagamento]);
+  pdf.autoTable({ startY:45, head:[['Produto','Qtd','Preço','Total','Data','Pagamento']], body });
+  pdf.save(`Miranda_Ferragens_Vendas_${new Date().toISOString().replace(/[:.]/g,'-')}.pdf`);
 }
 
-function baixarBlob(text,name){
-  const blob=new Blob([text],{type:'text/csv;charset=utf-8;'});
-  const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download=name; link.click();
+function gerarProdutosPDF(){
+  if(!produtos.length){ alert("Nenhum produto!"); return; }
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  pdf.setFontSize(16); pdf.text(" Miranda Ferragens - Produtos ",14,20);
+  pdf.setFontSize(10); pdf.text("Endereço: Qr 03 conjunto N casa 2 Buritizinho Sobradinho 2",14,28);
+  pdf.text("Gerado em: "+new Date().toLocaleString(),14,36);
+
+  const body = produtos.map(p=>[p.nome,p.quantidade,p.preco.toFixed(2)]);
+  pdf.autoTable({ startY:45, head:[['Produto','Qtd','Preço']], body });
+  pdf.save(`Miranda_Ferragens_Produtos_${new Date().toISOString().replace(/[:.]/g,'-')}.pdf`);
 }
 
-async function gerarRelatorioPDF(){
-  montarRelatorioPreview();
-  const {jsPDF}=window.jspdf; const el=document.getElementById('reportArea');
-  const canvas=await html2canvas(el,{scale:2});
-  const img=canvas.toDataURL('image/png');
-  const pdf=new jsPDF('p','mm','a4');
-  const w=pdf.internal.pageSize.getWidth();
-  const h=(canvas.height* w)/canvas.width;
-  pdf.addImage(img,'PNG',0,0,w,h); pdf.save('relatorio_vendas_miranda_ferragens.pdf');
-}
-
-function montarRelatorioPreview(){
-  const reportBody=document.getElementById('reportBody')||document.createElement('div');
-  if(!vendas.length){ reportBody.innerHTML='<div class="muted">Sem vendas registradas.</div>'; return; }
-  let html='<table style="width:100%;border-collapse:collapse"><thead><tr style="background:#f0f4f6"><th>Produto</th><th>Preço</th><th>Qtd</th><th>Total</th><th>Data</th><th>Pagamento</th></tr></thead><tbody>';
-  vendas.slice(-20).forEach(v=>{ html+=`<tr><td>${v.nome}</td><td>${v.preco.toFixed(2)}</td><td>${v.qtd}</td><td>${v.total.toFixed(2)}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento}</td></tr>`; });
-  html+='</tbody></table>'; reportBody.innerHTML=html;
-}
-
+// --- Resumo ---
 function atualizarResumo(){
   document.getElementById('totalProdutos').innerText=produtos.reduce((s,p)=>s+(p.quantidade||0),0);
   document.getElementById('totalVendas').innerText=vendas.length;
   document.getElementById('valorVendido').innerText=vendas.reduce((s,v)=>s+(v.total||0),0).toFixed(2);
 }
 
+// --- Amostra ---
 function carregarAmostra(){
   produtos=[
     {id:1,nome:'Parafuso 1/4"',preco:0.5,quantidade:200},
@@ -341,11 +361,12 @@ function carregarAmostra(){
     {id:3,nome:'Martelo 16oz',preco:45.00,quantidade:15},
     {id:4,nome:'Broca 8mm',preco:7.5,quantidade:60}
   ];
-  vendas=[]; salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  vendas=[]; salvarLocal(); atualizarTabelaProdutos(); atualizarTabelaVendas(); atualizarResumo();
 }
 
+// --- Inicialização ---
 function iniciar(){
-  atualizarTabelaProdutos(); atualizarCarrinho(); atualizarTabelaVendas(); atualizarResumo(); montarRelatorioPreview();
+  atualizarTabelaProdutos(); atualizarCarrinho(); atualizarTabelaVendas(); atualizarResumo();
 }
 iniciar();
 </script>
